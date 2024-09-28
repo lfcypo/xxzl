@@ -1,27 +1,27 @@
 name: Update xxzl
-​
-on: 
-  push: 
-    branches: 
-      - main  
+
+on:
+  push:
+    branches:
+      - main
 jobs:
   run-it:
     runs-on: ubuntu-latest
     name: zip
     steps:
-​
+
       - name: Checkout codes
         uses: actions/checkout@v2
-​
-      - name: Install rclone 
+
+      - name: Install rclone
         run: curl https://rclone.org/install.sh | sudo bash
-​
-      - name: Unzip config 
+
+      - name: Unzip config
         run: |
          mkdir -p ~/.config/rclone/
          unzip -P ${{ secrets.PASSWD }} rclone.zip -d ~/.config/rclone/
-     
-      - name: Run rclone 
+
+      - name: Run rclone
         run: |
           
           delay()
@@ -35,7 +35,7 @@ jobs:
           done
           }
           delay 2 
-​
+
           sudo cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
           ls -a
           
@@ -44,11 +44,11 @@ jobs:
           rclone lsf e5:/ > "lsf.log"
           rclone mkdir alipan:/xxzl
           rclone sync ./ alipan:/xxzl
-​
-      - name: Zip config 
+
+      - name: Zip config
         run: zip -P ${{ secrets.PASSWD }} rclone.zip -j ~/.config/rclone/rclone.conf
-​
-      - name: Commit config 
+
+      - name: Commit config
         run: |
          git config --global user.email "lfcypo@gmail.com"
          git config --global user.name "lfcypo"
