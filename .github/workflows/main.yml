@@ -41,7 +41,7 @@ jobs:
           
           echo `date +"%Y-%m-%d %H:%M:%S"` begin > time.log 
           echo "列出文件" #可以删
-          rclone lsf e5:/ > "lsf.log"
+          rclone lsf alipan:/ > "lsf.log"
           rclone mkdir alipan:/xxzl
           rclone sync ./ alipan:/xxzl
 
