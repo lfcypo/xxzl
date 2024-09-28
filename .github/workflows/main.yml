@@ -1,0 +1,57 @@
+name: Update xxzl
+​
+on: 
+  push: 
+    branches: 
+      - main  
+jobs:
+  run-it:
+    runs-on: ubuntu-latest
+    name: zip
+    steps:
+​
+      - name: Checkout codes
+        uses: actions/checkout@v2
+​
+      - name: Install rclone 
+        run: curl https://rclone.org/install.sh | sudo bash
+​
+      - name: Unzip config 
+        run: |
+         mkdir -p ~/.config/rclone/
+         unzip -P ${{ secrets.PASSWD }} rclone.zip -d ~/.config/rclone/
+     
+      - name: Run rclone 
+        run: |
+          
+          delay()
+          {
+          random_time=$(($RANDOM % $1))
+          echo "等待 ${random_time} 分钟后开始"
+          for((i=1;i<=${random_time};i++));  
+          do
+          echo "倒计时 $[${random_time}-$i] 分钟"
+          sleep 1m
+          done
+          }
+          delay 2 
+​
+          sudo cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+          ls -a
+          
+          echo `date +"%Y-%m-%d %H:%M:%S"` begin > time.log 
+          echo "列出文件" #可以删
+          rclone lsf e5:/ > "lsf.log"
+          rclone mkdir alipan:/xxzl
+          rclone sync ./ alipan:/xxzl
+​
+      - name: Zip config 
+        run: zip -P ${{ secrets.PASSWD }} rclone.zip -j ~/.config/rclone/rclone.conf
+​
+      - name: Commit config 
+        run: |
+         git config --global user.email "lfcypo@gmail.com"
+         git config --global user.name "lfcypo"
+         git add .
+         git commit -am "GitHub Actions Auto Rclone at $(date +'%Y%m%d')"
+         git push --force
